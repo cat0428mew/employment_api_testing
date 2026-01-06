@@ -1,0 +1,212 @@
+<html>
+	<head>
+		<title>113年15-29歲青年勞工就業狀況調查</title>
+		<!--ajax引入-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			body {
+			background-color: #8CBDB9;
+			color: white;
+			font-family: Arial, "Microsoft JhengHei", sans-serif;
+			margin: 0;
+			padding: 20px;
+			}
+			
+			h1 {
+            text-align: center;
+            margin-bottom: 20px;
+			}
+			
+			table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1500px; /* 設定最小寬度,確保會出現橫向捲軸 */
+			table-layout: fixed; /* 這是關鍵!沒有這個寬度設定不會生效 */
+			}
+			
+			thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+			}
+			
+			thead td {
+            background-color: #2D3E4E !important;
+            color: white;
+            font-weight: bold;
+			font-size: 16px;
+            padding: 18px 8px;
+            text-align: center;
+            border: 1px solid #1a252f;
+			}
+			
+			tbody td {
+            padding: 18px 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            vertical-align: top;
+            word-wrap: break-word; /* 確保長文字會自動斷行 */
+            background-color: white;
+            color: #333;
+			}
+			
+			/* 單數行 */
+			tbody tr:nth-child(odd) td {
+			background-color: #E3F2FD;
+			}
+			
+			/* 雙數行 */
+			tbody tr:nth-child(even) td {
+			background-color: white;
+			}
+			
+			td {
+			padding: 10px 8px;
+			border: 1px solid #ddd;
+			font-size: 13px;
+			vertical-align: top;
+			word-wrap: break-word; /* 文字自動換行 */
+			}
+			
+			/* 針對不同欄位設定寬度 */
+			thead td:nth-child(1) { width: 60px; }   /* 編號 */
+			thead td:nth-child(2) { width: 120px; }  /* 統計項目別 */
+			thead td:nth-child(3) { width: 150px; }  /* 細項 */
+			thead td:nth-child(4) { width: 100px; }  /* 樣本數 */
+
+			/* 百分比欄位 - 統一寬度 */
+			thead td:nth-child(5),   /* 有遇到困難 */
+			thead td:nth-child(6),   /* 求職管道不足 */
+			thead td:nth-child(7),   /* 面試技巧不足 */
+			thead td:nth-child(8),   /* 工作內容要求不了解 */
+			thead td:nth-child(9),   /* 不知道適合工作 */
+			thead td:nth-child(10),  /* 技能不足 */
+			thead td:nth-child(11),  /* 學歷不足 */
+			thead td:nth-child(12),  /* 經歷不足 */
+			thead td:nth-child(13),  /* 職缺少 */
+			thead td:nth-child(14),  /* 其他困難 */
+			thead td:nth-child(15)   /* 沒有遇到困難 */
+			{
+				width: 120px; /* 所有百分比欄位統一寬度 */
+			}
+
+			/* 表格容器 - 可橫向捲動 */
+			.table_container {
+            overflow-x: auto;  /* 橫向捲軸 */
+            overflow-y: auto;  /* 縱向捲軸 */
+            max-height: 90vh;  /* 最大高度為視窗的 90% */
+            margin: 20px auto;
+            max-width: 95%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			}
+			
+			.back-btn {
+            background-color:#2D3E4E;
+            color:white;
+            border:none;
+            padding:8px 16px;
+            font-size:16px;
+            border-radius:6px;
+            cursor:pointer;
+			}
+			
+			.back-btn:hover {
+			background-color: #8CA9D3;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			}
+			
+		</style>
+	</head>
+
+<body>
+<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px;">
+	<h1 style="margin:0;">113年非學生青年初次尋職遭遇困難情形：</h1>
+    <button class="back-btn" onclick="goHome()">
+        返回首頁
+    </button>
+</div>
+
+<div class="table_container" id="tableContainer" style="display:none;">
+	<table border="1">
+		<thead>
+		
+		<tr bgcolor="#2D3E4E">
+			<td align="center">編號</td>
+			<td align="center">統計項目別</td>
+			<td align="center">細項</td>
+			<td align="center">樣本數（數量）</td>
+			<td align="center">有遇到困難<br>（百分比）</td>
+			<td align="center">有遇到求職管道不足的困難<br>（百分比）</td>
+			<td align="center">有遇到求職面試技巧不足或不會寫履歷的困難<br>（百分比）</td>
+			<td align="center">有遇到工作內容要求不了解的困難<br>（百分比）</td>
+			<td align="center">有遇到不知道自己適合做哪方面工作的困難<br>（百分比）</td>
+			<td align="center">有遇到技能不足的困難<br>（百分比）</td>
+			<td align="center">有遇到學歷不足的困難<br>（百分比）</td>
+			<td align="center">有遇到經歷不足的困難<br>（百分比）</td>	
+			<td align="center">有遇到適合的職缺少的困難<br>（百分比）</td>	
+			<td align="center">有遇到其他的困難<br>（百分比）</td>	
+			<td align="center">沒有遇到困難<br>（百分比）</td>	
+		</tr>
+		
+		</thead>
+		<!--寫死tbody架構 在JQ那邊寫好資料塞進來-->
+		<tbody id="row"></tbody>
+		
+	</table>
+</div>
+
+</body>
+
+</html>
+
+<script>
+function goHome() {
+    window.location.href = "index.html"; 
+}
+//jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
+$(document).ready(function(){
+	//ajax屬於JQ的一部分
+	$.ajax({
+		url:"https://apiservice.mol.gov.tw/OdService/download/A17000000J-020075-BMq", //放網址
+		type:"get", //這裡用get請求 亦可用post
+		dataType:"json", //檔案類型
+		success:function(status){
+			//放入原本已有的資料
+			total_len=status.length;
+			console.log(total_len);
+			console.log(status[0]);
+			//顯示表格
+			$("#tableContainer").show();
+
+			for(i=0;i<total_len;i++){
+				$("#row").append( //.html後面的都會被取代 要用增加的.append
+					"<tr>"+
+						"<td align='center'>"+(i+1)+"</td>"+
+						"<td>"+status[i]["統計項目別"]+"</td>"+
+						"<td>"+status[i]["細項"]+"</td>"+
+						"<td align='right'>"+status[i]["樣本數（數量）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到求職管道不足的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到求職面試技巧不足或不會寫履歷的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到工作內容要求不了解的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到不知道自己適合做哪方面工作的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到技能不足的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到學歷不足的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到經歷不足的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到適合的職缺少的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["有遇到其他的困難（百分比）"]+"</td>"+
+						"<td align='center'>"+status[i]["沒有遇到困難（百分比）"]+"</td>"+
+					"</tr>"
+				);
+			} //請求成功要執行的事情
+		},
+		
+		error:function(e){
+			console.log("請求失敗!"+e);
+		} //請求失敗要執行的事情 最後一個屬性不加逗號
+	});
+});
+
+</script>

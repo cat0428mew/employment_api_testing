@@ -1,0 +1,203 @@
+<html>
+	<head>
+		<title>108-112年私立就業服務機構基本資料及評鑑結果</title>
+		<!--ajax引入-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			body {
+			background-color: #8CBDB9;
+			color: white;
+			font-family: Arial, "Microsoft JhengHei", sans-serif;
+			margin: 0;
+			padding: 20px;
+			}
+			
+			h1 {
+            text-align: center;
+            margin-bottom: 20px;
+			}
+			
+			table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1500px; /* 設定最小寬度,確保會出現橫向捲軸 */
+			}
+			
+			thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+			}
+			
+			thead td {
+            background-color: #2D3E4E !important;
+            color: white;
+            font-weight: bold;
+			font-size: 16px;
+            padding: 18px 8px;
+            text-align: center;
+            border: 1px solid #1a252f;
+			}
+			
+			tbody td {
+            padding: 18px 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            vertical-align: top;
+            word-wrap: break-word; /* 確保長文字會自動斷行 */
+            background-color: white;
+            color: #333;
+			}
+			
+			/* 單數行 */
+			tbody tr:nth-child(odd) td {
+			background-color: #E3F2FD;
+			}
+			
+			/* 雙數行 */
+			tbody tr:nth-child(even) td {
+			background-color: white;
+			}
+			
+			td {
+			padding: 10px 8px;
+			border: 1px solid #ddd;
+			font-size: 13px;
+			vertical-align: top;
+			word-wrap: break-word; /* 文字自動換行 */
+			}
+
+			/* 表格容器 - 可橫向捲動 */
+			.table_container {
+            overflow-x: auto;  /* 橫向捲軸 */
+            overflow-y: auto;  /* 縱向捲軸 */
+            max-height: 90vh;  /* 最大高度為視窗的 90% */
+            margin: 20px auto;
+            max-width: 95%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			}
+			
+			.back-btn {
+            background-color:#2D3E4E;
+            color:white;
+            border:none;
+            padding:8px 16px;
+            font-size:16px;
+            border-radius:6px;
+            cursor:pointer;
+			}
+			
+			.back-btn:hover {
+			background-color: #8CA9D3;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			}
+			
+		</style>
+	</head>
+
+<body>
+<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px;">
+	<h1 style="margin:0;">108-112年私立就業服務機構基本資料及評鑑結果：</h1>
+    <button class="back-btn" onclick="goHome()">
+        返回首頁
+    </button>
+</div>
+
+<div class="table_container" id="tableContainer" style="display:none;">
+	<table border="1">
+		<thead>
+		
+		<tr bgcolor="#2D3E4E">
+			<td align="center">編號</td>
+			<td align="center">年度</td>
+			<td align="center">許可<br>證號</td>
+			<td align="center">公司名稱</td>
+			<td align="center">區域</td>
+			<td align="center">地址</td>
+			<td align="center">品質管理<br>（統計數值）</td>
+			<td align="center">違規處分<br>（統計數值）</td>
+			<td align="center">顧客服務<br>（統計數值）</td>
+			<td align="center">其他事項<br>（統計數值）</td>
+			<td align="center">總成績<br>（統計數值）</td>
+			<td align="center">停業處分及<br>申報暫停營業</td>
+			<td align="center">重大違法行為</td>
+		</tr>
+		
+		</thead>
+		<!--寫死tbody架構 在JQ那邊寫好資料塞進來-->
+		<tbody id="row"></tbody>
+		
+	</table>
+</div>
+
+</body>
+
+</html>
+
+<script>
+function goHome() {
+    window.location.href = "index.html"; 
+}
+//jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
+$(document).ready(function(){
+	//ajax屬於JQ的一部分
+	$.ajax({
+		url:"https://apiservice.mol.gov.tw/OdService/download/A17020000J-000001-MqS", //放網址
+		type:"get", //這裡用get請求 亦可用post
+		dataType:"json", //檔案類型
+		success:function(evaluation){
+			//放入原本已有的資料
+			total_len=evaluation.length;
+			console.log(total_len);
+			console.log(evaluation[0]);
+			//顯示表格
+			$("#tableContainer").show();
+
+			for(i=0;i<total_len;i++){
+				// 處理停業處分及申報暫停營業-Y粗體紅字
+				var stopBusiness=evaluation[i]["停業處分及申報暫停營業"];
+				var stopBusinessDisplay=(stopBusiness==="Y"||stopBusiness==="y")
+					? "<strong style='color:red;'>"+stopBusiness+"</strong>"
+					: stopBusiness;
+				
+				// 處理重大違法行為-Y粗體紅字
+				var violation=evaluation[i]["重大違法行為"];
+				var violationDisplay=(violation==="Y"||violation==="y") 
+					? "<strong style='color:red;'>"+violation+"</strong>" 
+					: violation;
+				
+				// 處理總成績-大於90分加底線
+				var totalScore=evaluation[i]["總成績（統計數值）"];
+				var totalScoreDisplay=(totalScore>90) 
+					? "<span style='text-decoration:underline;'>"+totalScore+"</span>" 
+					: totalScore;
+				
+				$("#row").append( //.html後面的都會被取代 要用增加的.append
+					"<tr>"+
+						"<td align='center'>"+(i+1)+"</td>"+
+						"<td align='center'>"+evaluation[i]["年度"]+"</td>"+
+						"<td align='right'>"+evaluation[i]["許可證號"]+"</td>"+
+						"<td>"+evaluation[i]["公司名稱"]+"</td>"+
+						"<td>"+evaluation[i]["區域"]+"</td>"+
+						"<td>"+evaluation[i]["地址"]+"</td>"+
+						"<td align='right'>"+evaluation[i]["品質管理（統計數值）"]+"</td>"+
+						"<td align='right'>"+evaluation[i]["違規處分（統計數值）"]+"</td>"+
+						"<td align='right'>"+evaluation[i]["顧客服務（統計數值）"]+"</td>"+
+						"<td align='right'>"+evaluation[i]["其他事項（統計數值）"]+"</td>"+
+						"<td align='right'>"+totalScoreDisplay+"</td>"+
+						"<td>"+stopBusinessDisplay+"</td>"+
+						"<td>"+violationDisplay+"</td>"+
+					"</tr>"
+				);
+			} //請求成功要執行的事情
+		},
+		
+		error:function(e){
+			console.log("請求失敗!"+e);
+		} //請求失敗要執行的事情 最後一個屬性不加逗號
+	});
+});
+
+</script>

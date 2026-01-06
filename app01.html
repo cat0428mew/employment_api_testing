@@ -1,0 +1,369 @@
+<html>
+	<head>
+		<title>台灣就業通網站職缺清單</title>
+		<!--ajax引入-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			body {
+			background-color: #8CBDB9;
+			color: white;
+			font-family: Arial, "Microsoft JhengHei", sans-serif;
+			margin: 0;
+			padding: 20px;
+			}
+			
+			h1 {
+            text-align: center;
+            margin-bottom: 20px;
+			}
+			
+			table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 2000px; /* 設定最小寬度,確保會出現橫向捲軸 */
+			table-layout: fixed; /* 這是關鍵!沒有這個寬度設定不會生效 */
+			}
+			
+			thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+			}
+			
+			thead td {
+            background-color: #2D3E4E !important;
+            color: white;
+			font-size: 16px;
+            font-weight: bold;
+            padding: 16px 8px;
+            text-align: center;
+            border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			}
+
+			thead td:hover{
+				background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+				content: "▲▼";
+				font-size: 12px;
+				opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+				content: "▼";
+				opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+				content: "▲";
+				opacity: 1;
+			}
+
+			tbody td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            vertical-align: top;
+            word-wrap: break-word; /* 確保長文字會自動斷行 */
+            background-color: white;
+            color: #333;
+			}
+			
+			.text-content {
+				display: block; /*不能用inlline -webkit-line-clamp不支援display: inline*/
+			}
+
+			.text-content.collapsed {
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.more-btn {
+				color: #2196F3;
+				cursor: pointer;
+				font-weight: bold;
+				text-decoration: underline;
+				margin-left: 5px;
+				white-space: nowrap;
+				display: inline-block; /*換行*/
+			}
+
+			.more-btn:hover {
+				color: #1976d2;
+			}
+
+			/* 單數行 */
+			tbody tr:nth-child(odd) td {
+			background-color: #E3F2FD;
+			}
+			
+			/* 雙數行 */
+			tbody tr:nth-child(even) td {
+			background-color: white;
+			}
+			
+			td {
+			padding: 10px 8px;
+			border: 1px solid #ddd;
+			font-size: 15px;
+			vertical-align: top;
+			word-wrap: break-word; /* 文字自動換行 */
+			}
+				
+			/* 限制特定欄位寬度 */
+			td:nth-child(1) { width: 60px; min-width: 60px; }  /* 編號 */
+			td:nth-child(2) { width: 180px; min-width: 150px; } /* 職務名稱 */
+			td:nth-child(3) { width: 100px; min-width: 100px; } /* 職務性質 */
+			td:nth-child(4) { width: 80px; min-width: 80px; }   /* 大類代碼 */
+			td:nth-child(5) { width: 120px; min-width: 120px; } /* 大類名稱 */
+			td:nth-child(6) { width: 80px; min-width: 80px; }   /* 小類代碼 */
+			td:nth-child(7) { width: 120px; min-width: 120px; } /* 小類名稱 */
+			td:nth-child(8) { width: 80px; min-width: 80px; }   /* 雇用人數 */
+			td:nth-child(9) { width: 120px; min-width: 120px; } /* 截止日期 */
+			td:nth-child(10) { width: 250px; min-width: 200px; max-width: 300px; line-height: 1.6;} /* 工作內容 */
+			td:nth-child(11) { width: 100px; min-width: 100px; } /* 工作地點 */
+			td:nth-child(12) { width: 100px; min-width: 100px; } /* 工作經驗 */
+			td:nth-child(13) { width: 150px; min-width: 120px; } /* 工作時間 */
+			td:nth-child(14) { width: 100px; min-width: 100px; } /* 核薪方式 */
+			td:nth-child(15) { width: 100px; min-width: 100px; } /* 薪資下限 */
+			td:nth-child(16) { width: 100px; min-width: 100px; } /* 薪資上限 */
+			td:nth-child(17) { width: 100px; min-width: 100px; } /* 學歷要求 */
+			td:nth-child(18) { width: 200px; min-width: 150px; max-width: 250px; word-break: break-all; } /* URL */
+			td:nth-child(19) { width: 150px; min-width: 120px; } /* 公司名稱 */
+			td:nth-child(20) { width: 120px; min-width: 120px; } /* 更新日期 */
+
+			/* 表格容器 - 可橫向捲動 */
+			.table_container {
+            overflow-x: auto;  /* 橫向捲軸 */
+            overflow-y: auto;  /* 縱向捲軸 */
+            max-height: 90vh;  /* 最大高度為視窗的 90% */
+            margin: 20px auto;
+            max-width: 95%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			}
+			
+			.back-btn {
+            background-color:#2D3E4E;
+            color:white;
+            border:none;
+            padding:8px 16px;
+            font-size:16px;
+            border-radius:6px;
+            cursor:pointer;
+			}
+			
+			.back-btn:hover {
+			background-color: #8CA9D3;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			}
+			
+		</style>
+	</head>
+
+<body>
+<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px;">
+	<h1 style="margin:0;">台灣就業通網站職缺清單：</h1>
+    <button class="back-btn" onclick="goHome()">
+        返回首頁
+    </button>
+</div>
+
+
+<div class="table_container" id="tableContainer" style="display:none;">
+	<table border="1">
+		<thead>
+		
+		<tr bgcolor="#2D3E4E">
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="text">職務名稱</td>
+			<td align="center" data-column="2" data-type="text">職務性質</td>
+			<td align="center" data-column="3" data-type="text">職務大類別代碼</td>
+			<td align="center" data-column="4" data-type="text">職務大類別名稱</td>
+			<td align="center" data-column="5" data-type="text">職務小類別代碼</td>
+			<td align="center" data-column="6" data-type="text">職務小類別名稱</td>
+			<td align="center" data-column="7" data-type="number">雇用人數</td>
+			<td align="center" data-column="8" data-type="date">應徵截止日期</td>
+			<td align="center" data-column="9" data-type="text">工作內容</td>
+			<td align="center" data-column="10" data-type="text">工作地點</td>
+			<td align="center" data-column="11" data-type="text">工作經驗</td>
+			<td align="center" data-column="12" data-type="text">工作時間</td>
+			<td align="center" data-column="13" data-type="text">核薪方式</td>
+			<td align="center" data-column="14" data-type="number">薪資範圍下限</td>
+			<td align="center" data-column="15" data-type="number">薪資範圍上限</td>
+			<td align="center" data-column="16" data-type="text">最低學歷要求</td>
+			<td align="center" data-column="17" data-type="text">職缺資料URL</td>
+			<td align="center" data-column="18" data-type="text">公司名稱</td>
+			<td align="center" data-column="19" data-type="date">職缺更新日期</td>
+		</tr>
+		
+		</thead>
+		<!--寫死tbody架構 在JQ那邊寫好資料塞進來-->
+		<tbody id="row"></tbody>
+		
+	</table>
+</div>
+
+</body>
+
+</html>
+
+<script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
+function goHome() {
+    window.location.href = "index.html"; 
+}
+
+function toggleText(btn){
+	const textContent=$(btn).prev(".text-content");
+
+	if(textContent.hasClass("collapsed")){
+		textContent.removeClass("collapsed");
+		$(btn).text("(less)");
+	}else{
+		textContent.addClass("collapsed");
+		$(btn).text("(more)");
+	}
+}
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		const jobDetail=data[i].JOB_DETAIL || "";
+		const needsCollapse=jobDetail.length > 40;
+
+		const jobDetailHtml = needsCollapse
+			? '<span class="text-content collapsed">' + jobDetail + '</span><span class="more-btn" onclick="toggleText(this)">(more)</span>'
+			: '<span class="text-content">' + jobDetail + '</span>';
+			
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td>"+data[i].OCCU_DESC+"</td>"+
+				"<td>"+data[i].WK_TYPE+"</td>"+
+				"<td align='center'>"+data[i].CJOB1_COUNT+"</td>"+
+				"<td>"+data[i].CJOB_NAME1+"</td>"+
+				"<td align='center'>"+data[i].CJOB2_COUNT+"</td>"+
+				"<td>"+data[i].CJOB_NAME2+"</td>"+
+				"<td align='center'>"+data[i].JOB_PERSON+"</td>"+
+				"<td align='center'>"+data[i].STOP_DATE+"</td>"+
+				"<td>"+jobDetailHtml+"</td>"+
+				"<td>"+data[i].CITYNAME+"</td>"+
+				"<td>"+data[i].EXPERIENCE+"</td>"+
+				"<td>"+data[i].WKTIME+"</td>"+
+				"<td>"+data[i].SALARYCD+"</td>"+
+				"<td align='right'>"+data[i].NT_L+"</td>"+
+				"<td align='right'>"+data[i].NT_U+"</td>"+
+				"<td>"+data[i].EDGRDESC+"</td>"+
+				"<td><a href='"+(data[i].URL_QUERY || "#")+"' target='_blank' style='color:#2196F3;'>連結</a></td>" +
+				"<td>"+data[i].COMPNAME+"</td>"+
+				"<td align='center'>"+data[i].TRANDATE+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=["序號", "OCCU_DESC", "WK_TYPE", "CJOB1_COUNT", "CJOB_NAME1", 
+                    "CJOB2_COUNT", "CJOB_NAME2", "JOB_PERSON", "STOP_DATE", "JOB_DETAIL",
+                    "CITYNAME", "EXPERIENCE", "WKTIME", "SALARYCD", "NT_L", "NT_U",
+                    "EDGRDESC", "URL_QUERY", "COMPNAME", "TRANDATE"];
+	
+	const fieldName=fields[column];
+	
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valA) || 0)-(parseFloat(valB) || 0);
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valB) || 0)-(parseFloat(valA) || 0);
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});		
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
+//jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
+$(document).ready(function(){
+	//ajax屬於JQ的一部分
+	$.ajax({
+		url:"https://apiservice.mol.gov.tw/OdService/download/A17000000J-030144-nkP", //放網址
+		type:"get", //這裡用get請求 亦可用post
+		dataType:"json", //檔案類型
+		success:function(info){
+			originalData=[...info];
+			currentData=[...info];
+
+			console.log("共載入"+info.length+"筆職缺資料");
+			$("#tableContainer").show();
+
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			})
+		},
+		
+		error:function(e){
+			console.log("請求失敗!"+e);
+		} //請求失敗要執行的事情 最後一個屬性不加逗號
+	});
+});
+
+</script>

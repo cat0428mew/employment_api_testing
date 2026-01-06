@@ -1,0 +1,237 @@
+<html>
+	<head>
+		<title>職業訓練課程資訊</title>
+		<!--ajax引入-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<style>
+			body {
+			background-color: #8CBDB9;
+			color: white;
+			font-family: Arial, "Microsoft JhengHei", sans-serif;
+			margin: 0;
+			padding: 20px;
+			}
+			
+			h1 {
+            text-align: center;
+            margin-bottom: 20px;
+			}
+			
+			table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1500px; /* 設定最小寬度,確保會出現橫向捲軸 */
+			table-layout: fixed; /* 這是關鍵!沒有這個寬度設定不會生效 */
+			}
+			
+			thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+			}
+			
+			thead td {
+            background-color: #2D3E4E !important;
+            color: white;
+            font-weight: bold;
+			font-size: 16px;
+            padding: 18px 8px;
+            text-align: center;
+            border: 1px solid #1a252f;
+			}
+			
+			tbody td {
+            padding: 18px 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            vertical-align: top;
+            word-wrap: break-word; /* 確保長文字會自動斷行 */
+            background-color: white;
+            color: #333;
+			}
+			
+			/* 單數行 */
+			tbody tr:nth-child(odd) td {
+			background-color: #E3F2FD;
+			}
+			
+			/* 雙數行 */
+			tbody tr:nth-child(even) td {
+			background-color: white;
+			}
+			
+			td {
+			padding: 10px 8px;
+			border: 1px solid #ddd;
+			font-size: 15px;
+			vertical-align: top;
+			word-wrap: break-word; /* 文字自動換行 */
+			}
+			
+			/* 針對不同欄位設定寬度 */
+			thead td:nth-child(1) { width: 50px; }   /* 編號 */
+			thead td:nth-child(2) { width: 80px; }   /* URL連結 */
+			thead td:nth-child(3) { width: 200px; }  /* 訓練時間 */
+			thead td:nth-child(4) { width: 200px; }  /* 報名時間 */
+			thead td:nth-child(5) { width: 150px; }  /* 考試時間 */
+			thead td:nth-child(6) { width: 100px; }  /* 負擔費用 */
+			thead td:nth-child(7) { width: 250px; }  /* 職訓目標 */
+			thead td:nth-child(8) { width: 300px; }  /* 課程內容 */
+			thead td:nth-child(9) { width: 120px; }  /* 區域單位名稱 */
+			thead td:nth-child(10) { width: 150px; } /* BTI單位名稱 */
+			thead td:nth-child(11) { width: 100px; } /* 課程時段 */
+			thead td:nth-child(12) { width: 80px; }  /* 數值 */
+			thead td:nth-child(13) { width: 100px; } /* 縣市名稱 */
+			thead td:nth-child(14) { width: 100px; } /* 地區 */
+			thead td:nth-child(15) { width: 80px; }  /* 總數量 */
+			thead td:nth-child(16) { width: 80px; }  /* 數量 */
+			thead td:nth-child(17) { width: 250px; } /* 職訓處地址 */
+			thead td:nth-child(18) { width: 150px; } /* 職訓處名稱 */
+			thead td:nth-child(19) { width: 120px; } /* 職訓處電話 */
+			thead td:nth-child(20) { width: 80px; }  /* 分機 */
+			thead td:nth-child(21) { width: 180px; } /* EMAIL */
+			thead td:nth-child(22) { width: 80px; }  /* 序號 */
+			thead td:nth-child(23) { width: 200px; } /* 職訓課程名稱 */
+			thead td:nth-child(24) { width: 80px; }  /* 數量 */
+			thead td:nth-child(25) { width: 150px; } /* HashCode */
+
+			/* 表格容器 - 可橫向捲動 */
+			.table_container {
+            overflow-x: auto;  /* 橫向捲軸 */
+            overflow-y: auto;  /* 縱向捲軸 */
+            max-height: 90vh;  /* 最大高度為視窗的 90% */
+            margin: 20px auto;
+            max-width: 95%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			}
+			
+			.back-btn {
+            background-color:#2D3E4E;
+            color:white;
+            border:none;
+            padding:8px 16px;
+            font-size:16px;
+            border-radius:6px;
+            cursor:pointer;
+			}
+			
+			.back-btn:hover {
+			background-color: #8CA9D3;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			}
+			
+		</style>
+	</head>
+
+<body>
+<div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px;">
+	<h1 style="margin:0;">職業訓練課程資訊：</h1>
+    <button class="back-btn" onclick="goHome()">
+        返回首頁
+    </button>
+</div>
+
+<div class="table_container" id="tableContainer" style="display:none;">
+	<table border="1">
+		<thead>
+		
+		<tr bgcolor="#2D3E4E">
+			<td align="center">編號</td>
+			<td align="center">職業訓練課程的URL</td>
+			<td align="center">訓練時間</td>
+			<td align="center">報名時間</td>
+			<td align="center">考試時間</td>
+			<td align="center">負擔費用</td>
+			<td align="center">職訓目標</td>
+			<td align="center">課程內容</td>
+			<td align="center">區域單位名稱</td>
+			<td align="center">BTI單位名稱</td>
+			<td align="center">課程時段</td>
+			<td align="center">數值</td>
+			<td align="center">縣市名稱</td>
+			<td align="center">地區</td>
+			<td align="center">總數量</td>
+			<td align="center">數量</td>
+			<td align="center">職訓處地址</td>
+			<td align="center">職訓處名稱</td>
+			<td align="center">職訓處電話</td>
+			<td align="center">分機</td>
+			<td align="center">EMAIL</td>
+			<td align="center">序號</td>
+			<td align="center">職訓課程名稱</td>
+			<td align="center">數量</td>
+			<td align="center">HashCode</td>
+		</tr>
+		
+		</thead>
+		<!--寫死tbody架構 在JQ那邊寫好資料塞進來-->
+		<tbody id="row"></tbody>
+		
+	</table>
+</div>
+
+</body>
+
+</html>
+
+<script>
+function goHome() {
+    window.location.href = "index.html"; 
+}
+//jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
+$(document).ready(function(){
+	//ajax屬於JQ的一部分
+	$.ajax({
+		url:"https://apiservice.mol.gov.tw/OdService/download/A17000000J-000007-h0K", //放網址
+		type:"get", //這裡用get請求 亦可用post
+		dataType:"json", //檔案類型
+		success:function(training){
+			//放入原本已有的資料
+			total_len=training.length;
+			console.log(total_len);
+			console.log(training[0]);
+			//顯示表格
+			$("#tableContainer").show();
+
+			for(i=0;i<total_len;i++){
+				$("#row").append( //.html後面的都會被取代 要用增加的.append
+					"<tr>"+
+						"<td align='center'>"+(i+1)+"</td>"+
+						"<td><a href='"+(training[i].URL || "#")+"' target='_blank' style='color:#2196F3;'>連結</a></td>" +
+						"<td>"+training[i]["TRAINING_PERIOD"]+"</td>"+
+						"<td>"+training[i]["SIGNUP_PERIOD"]+"</td>"+
+						"<td>"+training[i]["TEST_DATE"]+"</td>"+
+						"<td>"+training[i]["FEE"]+"</td>"+
+						"<td>"+training[i]["PURPOSE"]+"</td>"+
+						"<td>"+training[i]["CONTENT"]+"</td>"+
+						"<td>"+training[i]["DISTNAME"]+"</td>"+
+						"<td>"+training[i]["BTINAME"]+"</td>"+
+						"<td align='center'>"+training[i]["HOURRANNAME"]+"</td>"+
+						"<td align='center'>"+training[i]["THOURS（數值）"]+"</td>"+
+						"<td align='center'>"+training[i]["CTNAME（縣市名稱）"]+"</td>"+
+						"<td align='center'>"+training[i]["ZIPNAME"]+"</td>"+
+						"<td align='center'>"+training[i]["CAI_ZIPCODE（數量）"]+"</td>"+
+						"<td align='center'>"+training[i]["CAI_ZIPCODE2W（數量）"]+"</td>"+
+						"<td>"+training[i]["CAI_ADDRESS"]+"</td>"+
+						"<td>"+training[i]["CNAME"]+"</td>"+
+						"<td>"+training[i]["PHONE"]+"</td>"+
+						"<td>"+training[i]["PHONE_EXT"]+"</td>"+
+						"<td>"+training[i]["EMAIL"]+"</td>"+
+						"<td>"+training[i]["BCM_SNO（序號）"]+"</td>"+
+						"<td>"+training[i]["CLASSNAME"]+"</td>"+
+						"<td align='center'>"+training[i]["CYCLTYPE（數量）"]+"</td>"+
+						"<td align='center'>"+training[i]["HashCode"]+"</td>"+
+					"</tr>"
+				);
+			} //請求成功要執行的事情
+		},
+		
+		error:function(e){
+			console.log("請求失敗!"+e);
+		} //請求失敗要執行的事情 最後一個屬性不加逗號
+	});
+});
+
+</script>
