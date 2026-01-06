@@ -275,12 +275,13 @@ function renderTable(data){
 }
 
 function sortTable(column, type){
-	const fields=["序號", "OCCU_DESC", "WK_TYPE", "CJOB1_COUNT", "CJOB_NAME1", 
+	const fields=[null, "OCCU_DESC", "WK_TYPE", "CJOB1_COUNT", "CJOB_NAME1", 
                     "CJOB2_COUNT", "CJOB_NAME2", "JOB_PERSON", "STOP_DATE", "JOB_DETAIL",
                     "CITYNAME", "EXPERIENCE", "WKTIME", "SALARYCD", "NT_L", "NT_U",
                     "EDGRDESC", "URL_QUERY", "COMPNAME", "TRANDATE"];
 	
 	const fieldName=fields[column];
+	if(!fieldName) return;
 	
 	if(!sortStates[column]){
 		sortStates[column]="none";
@@ -365,8 +366,6 @@ $(document).ready(function(){
 		} //請求失敗要執行的事情 最後一個屬性不加逗號
 	});
 });
-
-</script>
 
 </script>
 
