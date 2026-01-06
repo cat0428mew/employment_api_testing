@@ -44,23 +44,23 @@
 			}
 
 			thead td:hover{
-				background-color: #3d4e5e !important;
+			background-color: #3d4e5e !important;
 			}
 			
 			thead td::after{
-				content: "▲▼";
-				font-size: 12px;
-				opacity: 0.5;
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
 			}
 
 			thead td.sort-desc::after{
-				content: "▼";
-				opacity: 1;
+			content: "▼";
+			opacity: 1;
 			}
 
 			thead td.sort-asc::after{
-				content: "▲";
-				opacity: 1;
+			content: "▲";
+			opacity: 1;
 			}
 
 			tbody td {
@@ -74,29 +74,29 @@
 			}
 			
 			.text-content {
-				display: block; /*不能用inlline -webkit-line-clamp不支援display: inline*/
+			display: block; /*不能用inlline -webkit-line-clamp不支援display: inline*/
 			}
 
 			.text-content.collapsed {
-				display: -webkit-box;
-				-webkit-line-clamp: 2;
-				-webkit-box-orient: vertical;
-				overflow: hidden;
-				text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
 			}
 
 			.more-btn {
-				color: #2196F3;
-				cursor: pointer;
-				font-weight: bold;
-				text-decoration: underline;
-				margin-left: 5px;
-				white-space: nowrap;
-				display: inline-block; /*換行*/
+			color: #2196F3;
+			cursor: pointer;
+			font-weight: bold;
+			text-decoration: underline;
+			margin-left: 5px;
+			white-space: nowrap;
+			display: inline-block; /*換行*/
 			}
 
 			.more-btn:hover {
-				color: #1976d2;
+			color: #1976d2;
 			}
 
 			/* 單數行 */
@@ -357,7 +357,7 @@ $(document).ready(function(){
 				const column=parseInt($(this).attr("data-column"));
 				const type=$(this).attr("data-type");
 				sortTable(column, type);
-			})
+			});
 		},
 		
 		error:function(e){
@@ -367,3 +367,6 @@ $(document).ready(function(){
 });
 
 </script>
+
+</script>
+
