@@ -1,0 +1,361 @@
+<html>
+<head>
+	<meta charset="UTF-8"> <!--meta:提供給瀏覽器的額外資訊 本網頁文字編碼是utf-8-->
+	<title>勞動部就業資訊查詢系統</title>
+  
+	<style>
+		
+	/*導覽列區塊設定*/
+	nav {
+		background-color: #2D3E4E;     /* 導覽列背景為深灰色 */
+		padding: 10px;              /* 四周內距為 10px */
+	}
+
+	/*取消 ul 的預設項目符號、外距與內距，並排呈現 li*/
+	nav ul {
+		list-style: none;           /* 移除項目符號 (•) */
+		margin: 0;                  /* 取消外距 */
+		padding: 0;                 /* 取消內距 */
+		display: flex;             /* 使用彈性排版，讓第一層選單橫向排列 */
+	}
+
+	/*每個選單項目設定為相對位置，方便絕對定位子選單*/
+	nav li {
+		position: relative;         /* 為了讓內部的 ul 可以絕對定位 */
+	}
+
+	/*第一層選單項目之間的間距*/
+	nav > ul > li {
+		margin-right: 20px;         /* 右側間距 20px，讓選單不擠在一起 */
+	}
+
+	/*導覽列中的連結樣式*/
+	nav a {
+		text-decoration: none;      /* 取消超連結底線 */
+		color: white;               /* 文字顏色為白色 */
+		padding: 8px 12px;          /* 內距：上下 8px、左右 12px */
+		display: block;             /* 區塊顯示，讓整塊區域都能點擊 */
+	}
+
+	/*滑鼠滑過時的樣式*/
+	nav a:hover {
+		background-color: #8CA9D3;     /* 滑過時背景變成淺灰色 */
+		border-radius: 4px;         /* 邊角圓弧化 4px */
+	}
+
+	/*第二層選單設定*/
+	li ul {
+		display: none;              /* 預設不顯示子選單 */
+		position: absolute;         /* 絕對定位，使其相對於父層出現 */
+		top: 100%;                  /* 子選單出現在父項目正下方 */
+		left: 0;                    /* 與左側對齊 */
+		background-color: #647295;     /* 背景色深一點，區分層級 */
+		min-width: 150px;           /* 設定最小寬度 */
+	}
+
+	/*當滑鼠移到 li 上時，顯示對應的子選單*/
+	li:hover > ul {
+		display: block; /* 滑鼠移入時顯示子選單 */
+	}
+
+	/*第三層選單的定位（從第二層 ul 再展開一層）*/
+	li ul li ul {
+		top: 0; /* 從第二層的頂端開始 */
+		left: 100%; /* 向右偏移，使其出現在旁邊 */
+	}
+	
+	/* ===================== 主要配色 ===================== */
+	body {
+		background-color: #8CBDB9;
+		color: white;
+		margin: 0;
+		font-family: Arial, "Microsoft JhengHei", sans-serif;
+	}
+	
+	/* ===================== 主內容 ===================== */
+	main {
+		text-align: center;
+		padding: 40px 20px;
+	}
+
+	h1 {
+		font-size: 32px;
+		margin-bottom: 10px;
+	}
+
+	/* ===================== 系統簡介卡片 ===================== */
+	.intro-box {
+		background-color: #2D3E4E;
+		padding: 20px;
+		margin: 0 auto;
+		width: 70%;
+		border-radius: 15px;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		font-size: 18px;
+		line-height: 1.7;
+	}
+
+	/* ===================== 快速按鈕 ===================== */
+	.quick-buttons {
+		margin: 40px auto;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 20px;
+	}
+
+	.quick-btn {
+		background-color: #2D3E4E;
+		color: white;
+		padding: 18px 30px;
+		border-radius: 20px;
+		font-size: 20px;
+		text-decoration: none;
+		display: inline-block;
+		width: 260px;
+		text-align: center;
+		transition: 0.2s;
+		box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+	}
+
+	.quick-btn:hover {
+		background-color: #8CA9D3;
+		transform: translateY(-5px);
+		box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+	}
+
+	/* ===================== 公告區 ===================== */
+	.notice-box {
+		background-color: #fff8d6;
+		color: #5b4500;
+		width: 70%;
+		margin: 30px auto;
+		padding: 20px;
+		border-radius: 15px;
+		font-size: 18px;
+		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+	}
+
+	.notice-box h2 {
+		margin-top: 0;
+		color: #5b4500;
+	}
+
+	.notice-item {
+		padding: 10px 0;
+	}
+
+	/* ====== 快速按鈕 - 下拉選單 ====== */
+	.dropdown {
+		position: relative;
+		display: inline-block;
+	}
+
+	.dropdown-menu {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background-color: #2D3E4E;
+		border-radius: 12px;
+		padding: 10px 0;
+		width: 260px;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+		z-index: 10;
+	}
+
+	.dropdown-menu a {
+		display: block;
+		text-decoration: none;
+		color: white;
+		padding: 12px 20px;
+		font-size: 18px;
+	}
+
+	.dropdown-menu a:hover {
+		background-color: #8CA9D3;
+	}
+
+	/* 滑鼠移過主按鈕 → 顯示子選單 */
+	.dropdown:hover .dropdown-menu {
+		display: block;
+	}
+	
+	/* 右上角資訊列 */
+	nav {
+		position: relative; /* 讓右上角定位依附 nav */
+	}
+
+	.top-right-links {
+		position: absolute;
+		right: 20px;
+		top: 50%;
+		transform: translateY(-50%);  /* 垂直置中 */
+		display: flex;
+		gap: 15px;
+	}
+
+	.top-right-links a {
+		color: white;
+		text-decoration: none;
+		font-size: 16px;
+		padding: 6px 10px;
+		border-radius: 4px;
+	}
+
+	.top-right-links a:hover {
+		background-color: #8CA9D3; /* 滑鼠滑過效果保持一致 */
+	}
+	
+	/* === 聯絡我們：下拉選單 === */
+	.contact-dropdown {
+		position: relative;
+	}
+
+	.contact-menu {
+		display: none;
+		position: absolute;
+		right: 0;
+		top: 110%;
+		background-color: #2D3E4E;
+		padding: 10px 15px;
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+		width: 200px;
+		font-size: 15px;
+		color: white;
+		z-index: 20;
+	}
+
+	.contact-menu p {
+		margin: 6px 0;
+	}
+
+	/* 滑鼠移入 → 顯示選單 */
+	.contact-dropdown:hover .contact-menu {
+		display: block;
+	}
+
+	</style>
+</head>
+
+<body>
+
+  <!-- 導覽列 -->
+	<nav>
+		<ul>
+			<li>
+				<a href="#">就業市場與職缺資訊</a>
+				<ul>
+					<li>
+						<a href="app01.html">台灣就業通網站職缺清單</a>
+					</li>
+					<li>
+						<a href="app04.html">職業訓練課程資訊</a>
+					</li>
+					<li>
+						<a href="app06.html">通俗職業分類資訊</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">薪資與保險資訊</a>
+				<ul>
+					<li>
+						<a href="app03.html">113年初任人員薪資</a>
+					</li>
+					<li>
+						<a href="app08.html">勞工保險投保薪資分級表</a>
+					</li>
+					<li>
+						<a href="app09.html">勞就保保險費分擔金額表</a>
+					</li>
+					<li>
+						<a href="app10.html">1930–2023基本工資之制定與調整經過</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">就業統計與勞動狀況調查</a>
+				<ul>
+					<li>
+						<a href="app02.html">114年1-10月就業服務人數</a>
+					</li>
+					<li>
+						<a href="#">113年15-29歲青年勞工就業狀況調查</a>
+						<ul>
+								<li><a href="app05_1.html">非學生青年初次尋職遭遇困難情形</a></li>
+								<li><a href="app05_2.html">非學生青年初次尋職時間</a></li>
+								<li><a href="app05_3.html">青年換工作情形</a></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">就服機構與政府資源資料</a>
+				<ul>
+					<li>
+						<a href="app07.html">108-112年私立就業服務機構基本資料及評鑑結果</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		
+		<!--右上角資訊列-->
+		<div class="top-right-links">
+			<div class="contact-dropdown">
+				<a href="#" class="contact-btn">聯絡我們</a>
+				
+				<div class="contact-menu">
+					<p>電話：02-8995-6000</p>
+					<p>Email：service@mol.gov.tw</p>
+				</div>
+			</div>
+			<a href="https://www.mol.gov.tw/" target="_blank" class="mol-link">勞動部官網</a>
+		</div>
+		
+	</nav>
+
+	<!-- 主內容區 -->
+	<main>
+		<h1>歡迎來到勞動部就業資訊查詢系統！✨</h1>
+		<p>～方便各種求職者、學生、研究者查閱就業資料～</p>
+
+		<!-- 系統簡介 -->
+		<div class="intro-box">
+			<p>📌 本系統整合職缺、薪資、統計、訓練課程等重要就業相關資訊，</p>
+			<p>讓您能一次查到所有需要的資料，是求職轉職的好夥伴！</p>
+		</div>
+
+		<!-- 快速按鈕 -->
+		<div class="quick-buttons">
+			<a href="app01.html" class="quick-btn">💼 最新職缺查詢</a>
+			<a href="app03.html" class="quick-btn">💰 初任人員薪資</a>
+			<a href="app04.html" class="quick-btn">📚 職業訓練課程</a>
+			<a href="app02.html" class="quick-btn">📊 就業統計資料</a>
+			<a href="app08.html" class="quick-btn">🧾 勞保投保薪資分級表</a>
+			
+			<div class="dropdown">
+				<a href="#" class="quick-btn">🧑‍🎓 青年就業調查</a>
+				
+				<div class="dropdown-menu">
+					<a href="app05_1.html">1️⃣ 初次尋職遭遇困難</a>
+					<a href="app05_2.html">2️⃣ 初次尋職所需時間</a>
+					<a href="app05_3.html">3️⃣ 青年換工作情形</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- 最新公告 -->
+		<div class="notice-box">
+			<h2>📢 最新公告</h2>
+
+			<div class="notice-item">✔ 113 年初任人員薪資資料已更新</div>
+			<div class="notice-item">✔ 114 年就業服務人數資料上線</div>
+			<div class="notice-item">✔ 新增青年就業狀況調查（三大章節）</div>
+		</div>
+
+	</main>
+
+</body>
+</html>
