@@ -37,6 +37,29 @@
             padding: 18px 8px;
             text-align: center;
             border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			}
+			
+			thead td:hover{
+			background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+			content: "▼";
+			opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+			content: "▲";
+			opacity: 1;
 			}
 			
 			tbody td {
@@ -110,19 +133,19 @@
 		<thead>
 		
 		<tr bgcolor="#2D3E4E">
-			<td align="center">編號</td>
-			<td align="center">年度</td>
-			<td align="center">許可<br>證號</td>
-			<td align="center">公司名稱</td>
-			<td align="center">區域</td>
-			<td align="center">地址</td>
-			<td align="center">品質管理<br>（統計數值）</td>
-			<td align="center">違規處分<br>（統計數值）</td>
-			<td align="center">顧客服務<br>（統計數值）</td>
-			<td align="center">其他事項<br>（統計數值）</td>
-			<td align="center">總成績<br>（統計數值）</td>
-			<td align="center">停業處分及<br>申報暫停營業</td>
-			<td align="center">重大違法行為</td>
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="number">年度</td>
+			<td align="center" data-column="2" data-type="number">許可<br>證號</td>
+			<td align="center" data-column="3" data-type="text">公司名稱</td>
+			<td align="center" data-column="4" data-type="text">區域</td>
+			<td align="center" data-column="5" data-type="text">地址</td>
+			<td align="center" data-column="6" data-type="number">品質管理<br>（統計數值）</td>
+			<td align="center" data-column="7" data-type="number">違規處分<br>（統計數值）</td>
+			<td align="center" data-column="8" data-type="number">顧客服務<br>（統計數值）</td>
+			<td align="center" data-column="9" data-type="number">其他事項<br>（統計數值）</td>
+			<td align="center" data-column="10" data-type="number">總成績<br>（統計數值）</td>
+			<td align="center" data-column="11" data-type="text">停業處分及<br>申報暫停營業</td>
+			<td align="center" data-column="12" data-type="text">重大違法行為</td>
 		</tr>
 		
 		</thead>
@@ -137,9 +160,117 @@
 </html>
 
 <script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
 function goHome() {
     window.location.href = "index.html"; 
 }
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		// 處理停業處分及申報暫停營業-Y粗體紅字
+		var stopBusiness=data[i]["停業處分及申報暫停營業"];
+		var stopBusinessDisplay=(stopBusiness==="Y"||stopBusiness==="y")
+			? "<strong style='color:red;'>"+stopBusiness+"</strong>"
+			: stopBusiness;
+		
+		// 處理重大違法行為-Y粗體紅字
+		var violation=data[i]["重大違法行為"];
+		var violationDisplay=(violation==="Y"||violation==="y") 
+			? "<strong style='color:red;'>"+violation+"</strong>" 
+			: violation;
+		
+		// 處理總成績-大於90分加底線
+		var totalScore=data[i]["總成績（統計數值）"];
+		var totalScoreDisplay=(totalScore>90) 
+			? "<span style='text-decoration:underline;'>"+totalScore+"</span>" 
+			: totalScore;
+
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td align='center'>"+data[i]["年度"]+"</td>"+
+				"<td align='right'>"+data[i]["許可證號"]+"</td>"+
+				"<td>"+data[i]["公司名稱"]+"</td>"+
+				"<td>"+data[i]["區域"]+"</td>"+
+				"<td>"+data[i]["地址"]+"</td>"+
+				"<td align='right'>"+data[i]["品質管理（統計數值）"]+"</td>"+
+				"<td align='right'>"+data[i]["違規處分（統計數值）"]+"</td>"+
+				"<td align='right'>"+data[i]["顧客服務（統計數值）"]+"</td>"+
+				"<td align='right'>"+data[i]["其他事項（統計數值）"]+"</td>"+
+				"<td align='right'>"+totalScoreDisplay+"</td>"+
+				"<td>"+stopBusinessDisplay+"</td>"+
+				"<td>"+violationDisplay+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=[null, "年度", "許可證號", "公司名稱", "區域", "地址", "品質管理（統計數值）", "違規處分（統計數值）",
+	 "顧客服務（統計數值）", "其他事項（統計數值）", "總成績（統計數值）", "停業處分及申報暫停營業", "重大違法行為"];
+
+	const fieldName=fields[column];
+	if(!fieldName) return;
+
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valA) || 0)-(parseFloat(valB) || 0);
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valB) || 0)-(parseFloat(valA) || 0);
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -148,50 +279,22 @@ $(document).ready(function(){
 		type:"get", //這裡用get請求 亦可用post
 		dataType:"json", //檔案類型
 		success:function(evaluation){
-			//放入原本已有的資料
-			total_len=evaluation.length;
-			console.log(total_len);
+			originalData=[...evaluation];
+			currentData=[...evaluation];
+
+			console.log("共載入"+evaluation.length+"筆職缺資料");
 			console.log(evaluation[0]);
+
 			//顯示表格
 			$("#tableContainer").show();
 
-			for(i=0;i<total_len;i++){
-				// 處理停業處分及申報暫停營業-Y粗體紅字
-				var stopBusiness=evaluation[i]["停業處分及申報暫停營業"];
-				var stopBusinessDisplay=(stopBusiness==="Y"||stopBusiness==="y")
-					? "<strong style='color:red;'>"+stopBusiness+"</strong>"
-					: stopBusiness;
-				
-				// 處理重大違法行為-Y粗體紅字
-				var violation=evaluation[i]["重大違法行為"];
-				var violationDisplay=(violation==="Y"||violation==="y") 
-					? "<strong style='color:red;'>"+violation+"</strong>" 
-					: violation;
-				
-				// 處理總成績-大於90分加底線
-				var totalScore=evaluation[i]["總成績（統計數值）"];
-				var totalScoreDisplay=(totalScore>90) 
-					? "<span style='text-decoration:underline;'>"+totalScore+"</span>" 
-					: totalScore;
-				
-				$("#row").append( //.html後面的都會被取代 要用增加的.append
-					"<tr>"+
-						"<td align='center'>"+(i+1)+"</td>"+
-						"<td align='center'>"+evaluation[i]["年度"]+"</td>"+
-						"<td align='right'>"+evaluation[i]["許可證號"]+"</td>"+
-						"<td>"+evaluation[i]["公司名稱"]+"</td>"+
-						"<td>"+evaluation[i]["區域"]+"</td>"+
-						"<td>"+evaluation[i]["地址"]+"</td>"+
-						"<td align='right'>"+evaluation[i]["品質管理（統計數值）"]+"</td>"+
-						"<td align='right'>"+evaluation[i]["違規處分（統計數值）"]+"</td>"+
-						"<td align='right'>"+evaluation[i]["顧客服務（統計數值）"]+"</td>"+
-						"<td align='right'>"+evaluation[i]["其他事項（統計數值）"]+"</td>"+
-						"<td align='right'>"+totalScoreDisplay+"</td>"+
-						"<td>"+stopBusinessDisplay+"</td>"+
-						"<td>"+violationDisplay+"</td>"+
-					"</tr>"
-				);
-			} //請求成功要執行的事情
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			});
 		},
 		
 		error:function(e){
