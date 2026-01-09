@@ -38,8 +38,31 @@
             padding: 18px 8px;
             text-align: center;
             border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
 			}
 			
+			thead td:hover{
+			background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+			content: "▼";
+			opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+			content: "▲";
+			opacity: 1;
+			}
+
 			tbody td {
             padding: 18px 8px;
             border: 1px solid #ddd;
@@ -48,6 +71,32 @@
             word-wrap: break-word; /* 確保長文字會自動斷行 */
             background-color: white;
             color: #333;
+			}
+
+			.text-content {
+			display: block; /*不能用inlline -webkit-line-clamp不支援display: inline*/
+			}
+
+			.text-content.collapsed {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			}
+
+			.more-btn {
+			color: #2196F3;
+			cursor: pointer;
+			font-weight: bold;
+			text-decoration: underline;
+			margin-left: 5px;
+			white-space: nowrap;
+			display: inline-block; /*換行*/
+			}
+
+			.more-btn:hover {
+			color: #1976d2;
 			}
 			
 			/* 單數行 */
@@ -75,8 +124,8 @@
 			thead td:nth-child(4) { width: 200px; }  /* 報名時間 */
 			thead td:nth-child(5) { width: 150px; }  /* 考試時間 */
 			thead td:nth-child(6) { width: 100px; }  /* 負擔費用 */
-			thead td:nth-child(7) { width: 250px; }  /* 職訓目標 */
-			thead td:nth-child(8) { width: 300px; }  /* 課程內容 */
+			thead td:nth-child(7) { width: 250px;  max-width: 300px; line-height: 1.6;}  /* 職訓目標 */
+			thead td:nth-child(8) { width: 300px;  max-width: 300px; line-height: 1.6;}  /* 課程內容 */
 			thead td:nth-child(9) { width: 120px; }  /* 區域單位名稱 */
 			thead td:nth-child(10) { width: 150px; } /* BTI單位名稱 */
 			thead td:nth-child(11) { width: 100px; } /* 課程時段 */
@@ -138,31 +187,31 @@
 		<thead>
 		
 		<tr bgcolor="#2D3E4E">
-			<td align="center">編號</td>
-			<td align="center">職業訓練課程的URL</td>
-			<td align="center">訓練時間</td>
-			<td align="center">報名時間</td>
-			<td align="center">考試時間</td>
-			<td align="center">負擔費用</td>
-			<td align="center">職訓目標</td>
-			<td align="center">課程內容</td>
-			<td align="center">區域單位名稱</td>
-			<td align="center">BTI單位名稱</td>
-			<td align="center">課程時段</td>
-			<td align="center">數值</td>
-			<td align="center">縣市名稱</td>
-			<td align="center">地區</td>
-			<td align="center">總數量</td>
-			<td align="center">數量</td>
-			<td align="center">職訓處地址</td>
-			<td align="center">職訓處名稱</td>
-			<td align="center">職訓處電話</td>
-			<td align="center">分機</td>
-			<td align="center">EMAIL</td>
-			<td align="center">序號</td>
-			<td align="center">職訓課程名稱</td>
-			<td align="center">數量</td>
-			<td align="center">HashCode</td>
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="text">職業訓練課程的URL</td>
+			<td align="center" data-column="2" data-type="date">訓練時間</td>
+			<td align="center" data-column="3" data-type="date">報名時間</td>
+			<td align="center" data-column="4" data-type="date">考試時間</td>
+			<td align="center" data-column="5" data-type="text">負擔費用</td>
+			<td align="center" data-column="6" data-type="text">職訓目標</td>
+			<td align="center" data-column="7" data-type="text">課程內容</td>
+			<td align="center" data-column="8" data-type="text">區域單位名稱</td>
+			<td align="center" data-column="9" data-type="text">BTI單位名稱</td>
+			<td align="center" data-column="10" data-type="text">課程時段</td>
+			<td align="center" data-column="11" data-type="number">數值</td>
+			<td align="center" data-column="12" data-type="text">縣市名稱</td>
+			<td align="center" data-column="13" data-type="text">地區</td>
+			<td align="center" data-column="14" data-type="number">總數量</td>
+			<td align="center" data-column="15" data-type="number">數量</td>
+			<td align="center" data-column="16" data-type="text">職訓處地址</td>
+			<td align="center" data-column="17" data-type="text">職訓處名稱</td>
+			<td align="center" data-column="18" data-type="text">職訓處電話</td>
+			<td align="center" data-column="19" data-type="text">分機</td>
+			<td align="center" data-column="20" data-type="text">EMAIL</td>
+			<td align="center" data-column="21" data-type="text">序號</td>
+			<td align="center" data-column="22" data-type="text">職訓課程名稱</td>
+			<td align="center" data-column="23" data-type="number">數量</td>
+			<td align="center" data-column="24" data-type="text">HashCode</td>
 		</tr>
 		
 		</thead>
@@ -177,9 +226,139 @@
 </html>
 
 <script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
 function goHome() {
     window.location.href = "index.html"; 
 }
+
+function toggleText(btn){
+	const textContent=$(btn).prev(".text-content");
+
+	if(textContent.hasClass("collapsed")){
+		textContent.removeClass("collapsed");
+		$(btn).text("(less)");
+	}else{
+		textContent.addClass("collapsed");
+		$(btn).text("(more)");
+	}
+}
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		//處理"職訓目標"欄位
+		const purpose=data[i]["PURPOSE"] || "";
+		const purposeNeedsCollapse=purpose.length>40;
+		const purposeHtml=purposeNeedsCollapse
+			? '<span class="text-content collapsed">' + purpose + '</span><span class="more-btn" onclick="toggleText(this)">(more)</span>'
+			: '<span class="text-content">' + purpose + '</span>';
+		
+		//處理"課程內容"欄位
+		const content=data[i]["CONTENT"] || "";
+		const contentNeedsCollapse=content.length>40;
+		const contentHtml=contentNeedsCollapse
+			? '<span class="text-content collapsed">' + content + '</span><span class="more-btn" onclick="toggleText(this)">(more)</span>'
+			: '<span class="text-content">' + content + '</span>';
+
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td><a href='"+(data[i].URL || "#")+"' target='_blank' style='color:#2196F3;'>連結</a></td>" +
+				"<td>"+data[i]["TRAINING_PERIOD"]+"</td>"+
+				"<td>"+data[i]["SIGNUP_PERIOD"]+"</td>"+
+				"<td>"+data[i]["TEST_DATE"]+"</td>"+
+				"<td>"+data[i]["FEE"]+"</td>"+
+				"<td>"+purposeHtml+"</td>"+
+				"<td>"+contentHtml+"</td>"+
+				"<td>"+data[i]["DISTNAME"]+"</td>"+
+				"<td>"+data[i]["BTINAME"]+"</td>"+
+				"<td align='center'>"+data[i]["HOURRANNAME"]+"</td>"+
+				"<td align='center'>"+data[i]["THOURS（數值）"]+"</td>"+
+				"<td align='center'>"+data[i]["CTNAME（縣市名稱）"]+"</td>"+
+				"<td align='center'>"+data[i]["ZIPNAME"]+"</td>"+
+				"<td align='center'>"+data[i]["CAI_ZIPCODE（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["CAI_ZIPCODE2W（數量）"]+"</td>"+
+				"<td>"+data[i]["CAI_ADDRESS"]+"</td>"+
+				"<td>"+data[i]["CNAME"]+"</td>"+
+				"<td>"+data[i]["PHONE"]+"</td>"+
+				"<td>"+data[i]["PHONE_EXT"]+"</td>"+
+				"<td>"+data[i]["EMAIL"]+"</td>"+
+				"<td>"+data[i]["BCM_SNO（序號）"]+"</td>"+
+				"<td>"+data[i]["CLASSNAME"]+"</td>"+
+				"<td align='center'>"+data[i]["CYCLTYPE（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["HashCode"]+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=[null, "URL", "TRAINING_PERIOD", "SIGNUP_PERIOD", "TEST_DATE", 
+                    "FEE", "PURPOSE", "CONTENT", "DISTNAME", "BTINAME",
+                    "HOURRANNAME", "THOURS（數值）", "CTNAME（縣市名稱）", "ZIPNAME", "CAI_ZIPCODE（數量）", "CAI_ZIPCODE2W（數量）",
+                    "CAI_ADDRESS", "CNAME", "PHONE", "PHONE_EXT", "EMAIL", "BCM_SNO（序號）", "CLASSNAME", "CYCLTYPE（數量）", "HashCode"];
+	
+	const fieldName=fields[column];
+	if(!fieldName) return;
+	
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valA) || 0)-(parseFloat(valB) || 0);
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valB) || 0)-(parseFloat(valA) || 0);
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});		
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -188,44 +367,21 @@ $(document).ready(function(){
 		type:"get", //這裡用get請求 亦可用post
 		dataType:"json", //檔案類型
 		success:function(training){
-			//放入原本已有的資料
-			total_len=training.length;
-			console.log(total_len);
+			originalData=[...training];
+			currentData=[...training];
+
+			console.log("共載入"+training.length+"筆職缺資料");
 			console.log(training[0]);
 			//顯示表格
 			$("#tableContainer").show();
 
-			for(i=0;i<total_len;i++){
-				$("#row").append( //.html後面的都會被取代 要用增加的.append
-					"<tr>"+
-						"<td align='center'>"+(i+1)+"</td>"+
-						"<td><a href='"+(training[i].URL || "#")+"' target='_blank' style='color:#2196F3;'>連結</a></td>" +
-						"<td>"+training[i]["TRAINING_PERIOD"]+"</td>"+
-						"<td>"+training[i]["SIGNUP_PERIOD"]+"</td>"+
-						"<td>"+training[i]["TEST_DATE"]+"</td>"+
-						"<td>"+training[i]["FEE"]+"</td>"+
-						"<td>"+training[i]["PURPOSE"]+"</td>"+
-						"<td>"+training[i]["CONTENT"]+"</td>"+
-						"<td>"+training[i]["DISTNAME"]+"</td>"+
-						"<td>"+training[i]["BTINAME"]+"</td>"+
-						"<td align='center'>"+training[i]["HOURRANNAME"]+"</td>"+
-						"<td align='center'>"+training[i]["THOURS（數值）"]+"</td>"+
-						"<td align='center'>"+training[i]["CTNAME（縣市名稱）"]+"</td>"+
-						"<td align='center'>"+training[i]["ZIPNAME"]+"</td>"+
-						"<td align='center'>"+training[i]["CAI_ZIPCODE（數量）"]+"</td>"+
-						"<td align='center'>"+training[i]["CAI_ZIPCODE2W（數量）"]+"</td>"+
-						"<td>"+training[i]["CAI_ADDRESS"]+"</td>"+
-						"<td>"+training[i]["CNAME"]+"</td>"+
-						"<td>"+training[i]["PHONE"]+"</td>"+
-						"<td>"+training[i]["PHONE_EXT"]+"</td>"+
-						"<td>"+training[i]["EMAIL"]+"</td>"+
-						"<td>"+training[i]["BCM_SNO（序號）"]+"</td>"+
-						"<td>"+training[i]["CLASSNAME"]+"</td>"+
-						"<td align='center'>"+training[i]["CYCLTYPE（數量）"]+"</td>"+
-						"<td align='center'>"+training[i]["HashCode"]+"</td>"+
-					"</tr>"
-				);
-			} //請求成功要執行的事情
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			});
 		},
 		
 		error:function(e){
