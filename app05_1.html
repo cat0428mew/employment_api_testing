@@ -38,6 +38,29 @@
             padding: 18px 8px;
             text-align: center;
             border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			}
+			
+			thead td:hover{
+			background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+			content: "▼";
+			opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+			content: "▲";
+			opacity: 1;
 			}
 			
 			tbody td {
@@ -133,21 +156,21 @@
 		<thead>
 		
 		<tr bgcolor="#2D3E4E">
-			<td align="center">編號</td>
-			<td align="center">統計項目別</td>
-			<td align="center">細項</td>
-			<td align="center">樣本數（數量）</td>
-			<td align="center">有遇到困難<br>（百分比）</td>
-			<td align="center">有遇到求職管道不足的困難<br>（百分比）</td>
-			<td align="center">有遇到求職面試技巧不足或不會寫履歷的困難<br>（百分比）</td>
-			<td align="center">有遇到工作內容要求不了解的困難<br>（百分比）</td>
-			<td align="center">有遇到不知道自己適合做哪方面工作的困難<br>（百分比）</td>
-			<td align="center">有遇到技能不足的困難<br>（百分比）</td>
-			<td align="center">有遇到學歷不足的困難<br>（百分比）</td>
-			<td align="center">有遇到經歷不足的困難<br>（百分比）</td>	
-			<td align="center">有遇到適合的職缺少的困難<br>（百分比）</td>	
-			<td align="center">有遇到其他的困難<br>（百分比）</td>	
-			<td align="center">沒有遇到困難<br>（百分比）</td>	
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="text">統計項目別</td>
+			<td align="center" data-column="2" data-type="text">細項</td>
+			<td align="center" data-column="3" data-type="number">樣本數（數量）</td>
+			<td align="center" data-column="4" data-type="number">有遇到困難<br>（百分比）</td>
+			<td align="center" data-column="5" data-type="number">有遇到求職管道不足的困難<br>（百分比）</td>
+			<td align="center" data-column="6" data-type="number">有遇到求職面試技巧不足或不會寫履歷的困難<br>（百分比）</td>
+			<td align="center" data-column="7" data-type="number">有遇到工作內容要求不了解的困難<br>（百分比）</td>
+			<td align="center" data-column="8" data-type="number">有遇到不知道自己適合做哪方面工作的困難<br>（百分比）</td>
+			<td align="center" data-column="9" data-type="number">有遇到技能不足的困難<br>（百分比）</td>
+			<td align="center" data-column="10" data-type="number">有遇到學歷不足的困難<br>（百分比）</td>
+			<td align="center" data-column="11" data-type="number">有遇到經歷不足的困難<br>（百分比）</td>	
+			<td align="center" data-column="12" data-type="number">有遇到適合的職缺少的困難<br>（百分比）</td>	
+			<td align="center" data-column="13" data-type="number">有遇到其他的困難<br>（百分比）</td>	
+			<td align="center" data-column="14" data-type="number">沒有遇到困難<br>（百分比）</td>	
 		</tr>
 		
 		</thead>
@@ -162,9 +185,108 @@
 </html>
 
 <script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
 function goHome() {
     window.location.href = "index.html"; 
 }
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td>"+data[i]["統計項目別"]+"</td>"+
+				"<td>"+data[i]["細項"]+"</td>"+
+				"<td align='right'>"+data[i]["樣本數（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到求職管道不足的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到求職面試技巧不足或不會寫履歷的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到工作內容要求不了解的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到不知道自己適合做哪方面工作的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到技能不足的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到學歷不足的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到經歷不足的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到適合的職缺少的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有遇到其他的困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["沒有遇到困難（百分比）"]+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=[null, "統計項目別", "細項", "樣本數（數量）", "有遇到困難（百分比）", "有遇到求職管道不足的困難（百分比）",
+	 "有遇到求職面試技巧不足或不會寫履歷的困難（百分比）", "有遇到工作內容要求不了解的困難（百分比）", "有遇到不知道自己適合做哪方面工作的困難（百分比）",
+	  "有遇到技能不足的困難（百分比）", "有遇到學歷不足的困難（百分比）", "有遇到經歷不足的困難（百分比）", "有遇到適合的職缺少的困難（百分比）",
+	   "有遇到其他的困難（百分比）", "沒有遇到困難（百分比）"];
+
+	const fieldName=fields[column];
+	if(!fieldName) return;
+
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			//移除千位分隔符號後再轉換
+			if(type==="number"){
+				valA=parseFloat((valA || "0").toString().replace(/,/g, ""));
+				valB=parseFloat((valB || "0").toString().replace(/,/g, ""));
+				return valA-valB;
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				valA=parseFloat((valA || "0").toString().replace(/,/g, ""));
+				valB=parseFloat((valB || "0").toString().replace(/,/g, ""));
+				return valB-valA;
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -173,34 +295,22 @@ $(document).ready(function(){
 		type:"get", //這裡用get請求 亦可用post
 		dataType:"json", //檔案類型
 		success:function(status){
-			//放入原本已有的資料
-			total_len=status.length;
-			console.log(total_len);
+			originalData=[...status];
+			currentData=[...status];
+
+			console.log("共載入"+status.length+"筆職缺資料");
 			console.log(status[0]);
+
 			//顯示表格
 			$("#tableContainer").show();
 
-			for(i=0;i<total_len;i++){
-				$("#row").append( //.html後面的都會被取代 要用增加的.append
-					"<tr>"+
-						"<td align='center'>"+(i+1)+"</td>"+
-						"<td>"+status[i]["統計項目別"]+"</td>"+
-						"<td>"+status[i]["細項"]+"</td>"+
-						"<td align='right'>"+status[i]["樣本數（數量）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到求職管道不足的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到求職面試技巧不足或不會寫履歷的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到工作內容要求不了解的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到不知道自己適合做哪方面工作的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到技能不足的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到學歷不足的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到經歷不足的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到適合的職缺少的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["有遇到其他的困難（百分比）"]+"</td>"+
-						"<td align='center'>"+status[i]["沒有遇到困難（百分比）"]+"</td>"+
-					"</tr>"
-				);
-			} //請求成功要執行的事情
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			});
 		},
 		
 		error:function(e){
@@ -210,3 +320,4 @@ $(document).ready(function(){
 });
 
 </script>
+
