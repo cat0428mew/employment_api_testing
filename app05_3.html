@@ -38,6 +38,29 @@
             padding: 18px 8px;
             text-align: center;
             border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			}
+			
+			thead td:hover{
+			background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+			content: "▼";
+			opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+			content: "▲";
+			opacity: 1;
 			}
 			
 			tbody td {
@@ -129,26 +152,26 @@
 		<thead>
 		
 		<tr bgcolor="#2D3E4E">
-			<td align="center">編號</td>
-			<td align="center">統計項目別</td>
-			<td align="center">細項</td>
-			<td align="center">樣本數<br>（數量）</td>
-			<td align="center">沒打算換工作<br>（百分比）</td>
-			<td align="center">有打算換工作<br>（百分比）</td>
-			<td align="center">薪資福利不符期望<br>（百分比）</td>
-			<td align="center">工作無發展前景<br>（百分比）</td>
-			<td align="center">興趣不合<br>（百分比）</td>
-			<td align="center">工作環境不佳<br>（百分比）</td>
-			<td align="center">想換工作地點<br>（百分比）</td>
-			<td align="center">個人技能無法發揮<br>（百分比）</td>
-			<td align="center">公司經營困難<br>（百分比）</td>
-			<td align="center">家庭或健康因素<br>（百分比）</td>
-			<td align="center">工作太累壓力大<br>（百分比）</td>
-			<td align="center">與同事或主管相處困難<br>（百分比）</td>
-			<td align="center">想開創事業<br>（百分比）</td>
-			<td align="center">擔心被解僱<br>（百分比）</td>
-			<td align="center">準備考試<br>（百分比）</td>
-			<td align="center">其他<br>（百分比）</td>
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="text">統計項目別</td>
+			<td align="center" data-column="2" data-type="text">細項</td>
+			<td align="center" data-column="3" data-type="number">樣本數<br>（數量）</td>
+			<td align="center" data-column="4" data-type="number">沒打算換工作<br>（百分比）</td>
+			<td align="center" data-column="5" data-type="number">有打算換工作<br>（百分比）</td>
+			<td align="center" data-column="6" data-type="number">薪資福利不符期望<br>（百分比）</td>
+			<td align="center" data-column="7" data-type="number">工作無發展前景<br>（百分比）</td>
+			<td align="center" data-column="8" data-type="number">興趣不合<br>（百分比）</td>
+			<td align="center" data-column="9" data-type="number">工作環境不佳<br>（百分比）</td>
+			<td align="center" data-column="10" data-type="number">想換工作地點<br>（百分比）</td>
+			<td align="center" data-column="11" data-type="number">個人技能無法發揮<br>（百分比）</td>
+			<td align="center" data-column="12" data-type="number">公司經營困難<br>（百分比）</td>
+			<td align="center" data-column="13" data-type="number">家庭或健康因素<br>（百分比）</td>
+			<td align="center" data-column="14" data-type="number">工作太累壓力大<br>（百分比）</td>
+			<td align="center" data-column="15" data-type="number">與同事或主管相處困難<br>（百分比）</td>
+			<td align="center" data-column="16" data-type="number">想開創事業<br>（百分比）</td>
+			<td align="center" data-column="17" data-type="number">擔心被解僱<br>（百分比）</td>
+			<td align="center" data-column="18" data-type="number">準備考試<br>（百分比）</td>
+			<td align="center" data-column="19" data-type="number">其他<br>（百分比）</td>
 		</tr>
 		
 		</thead>
@@ -163,9 +186,113 @@
 </html>
 
 <script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
 function goHome() {
     window.location.href = "index.html"; 
 }
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td align='center'>"+data[i]["統計項目別"]+"</td>"+
+				"<td>"+data[i]["細項"]+"</td>"+
+				"<td align='right'>"+data[i]["樣本數（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["沒有打算轉換工作（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["有打算轉換工作（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為薪資及福利不符期望（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為工作無發展前景（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為興趣不合（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為工作環境不佳（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為想更換工作地點（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為個人技能無法有效發揮（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為公司經營困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為家庭或健康因素（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為工作太累壓力大（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為與同事或主管相處困難（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為想自行開創事業（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為擔心被解僱（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為準備考試（百分比）"]+"</td>"+
+				"<td align='center'>"+data[i]["因為其他（百分比）"]+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=[null, "統計項目別", "細項", "樣本數（數量）", "沒有打算轉換工作（百分比）", "有打算轉換工作（百分比）",
+	 "因為薪資及福利不符期望（百分比）", "因為工作無發展前景（百分比）", "因為興趣不合（百分比）", "因為工作環境不佳（百分比）",
+	  "因為想更換工作地點（百分比）", "因為個人技能無法有效發揮（百分比）", "因為公司經營困難（百分比）", "因為家庭或健康因素（百分比）",
+	 "因為工作太累壓力大（百分比）", "因為與同事或主管相處困難（百分比）", "因為想自行開創事業（百分比）", "因為擔心被解僱（百分比）",
+	 "因為準備考試（百分比）", "因為其他（百分比）"];
+
+	const fieldName=fields[column];
+	if(!fieldName) return;
+
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				valA=parseFloat((valA || "0").toString().replace(/,/g, ""));
+				valB=parseFloat((valB || "0").toString().replace(/,/g, ""));
+				return valA-valB;
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				valA=parseFloat((valA || "0").toString().replace(/,/g, ""));
+				valB=parseFloat((valB || "0").toString().replace(/,/g, ""));
+				return valB-valA;
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -174,39 +301,22 @@ $(document).ready(function(){
 		type:"get", //這裡用get請求 亦可用post
 		dataType:"json", //檔案類型
 		success:function(trans){
-			//放入原本已有的資料
-			total_len=trans.length;
-			console.log(total_len);
+			originalData=[...trans];
+			currentData=[...trans];
+
+			console.log("共載入"+trans.length+"筆職缺資料");
 			console.log(trans[0]);
+
 			//顯示表格
 			$("#tableContainer").show();
 
-			for(i=0;i<total_len;i++){
-				$("#row").append( //.html後面的都會被取代 要用增加的.append
-					"<tr>"+
-						"<td align='center'>"+(i+1)+"</td>"+
-						"<td align='center'>"+trans[i]["統計項目別"]+"</td>"+
-						"<td>"+trans[i]["細項"]+"</td>"+
-						"<td align='right'>"+trans[i]["樣本數（數量）"]+"</td>"+
-						"<td align='center'>"+trans[i]["沒有打算轉換工作（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["有打算轉換工作（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為薪資及福利不符期望（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為工作無發展前景（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為興趣不合（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為工作環境不佳（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為想更換工作地點（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為個人技能無法有效發揮（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為公司經營困難（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為家庭或健康因素（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為工作太累壓力大（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為與同事或主管相處困難（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為想自行開創事業（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為擔心被解僱（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為準備考試（百分比）"]+"</td>"+
-						"<td align='center'>"+trans[i]["因為其他（百分比）"]+"</td>"+
-					"</tr>"
-				);
-			} //請求成功要執行的事情
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			});
 		},
 		
 		error:function(e){
