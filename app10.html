@@ -38,6 +38,29 @@
             padding: 18px 8px;
             text-align: center;
             border: 1px solid #1a252f;
+			cursor: pointer;
+			user-select: none;
+			position: relative;
+			}
+			
+			thead td:hover{
+			background-color: #3d4e5e !important;
+			}
+			
+			thead td::after{
+			content: "▲▼";
+			font-size: 12px;
+			opacity: 0.5;
+			}
+
+			thead td.sort-desc::after{
+			content: "▼";
+			opacity: 1;
+			}
+
+			thead td.sort-asc::after{
+			content: "▲";
+			opacity: 1;
 			}
 			
 			tbody td {
@@ -118,11 +141,11 @@
 		<thead>
 		
 		<tr bgcolor="#2D3E4E">
-			<td align="center">編號</td>
-			<td align="center">年度</td>
-			<td align="center">指示/發佈日期（民國）</td>
-			<td align="center">內容/調整金額（新台幣）</td>
-			<td align="center">實施日期（民國）</td>
+			<td align="center" data-column="0" data-type="number">編號</td>
+			<td align="center" data-column="1" data-type="number">年度</td>
+			<td align="center" data-column="2" data-type="number">指示/發佈日期（民國）</td>
+			<td align="center" data-column="3" data-type="text">內容/調整金額（新台幣）</td>
+			<td align="center" data-column="4" data-type="number">實施日期（民國）</td>
 		</tr>
 		
 		</thead>
@@ -137,9 +160,90 @@
 </html>
 
 <script>
+let originalData=[];
+let currentData=[];
+let sortStates={};
+
 function goHome() {
     window.location.href = "index.html"; 
 }
+
+function renderTable(data){
+	$("#row").empty();
+	for(let i=0; i<data.length; i++){
+		$("#row").append(
+			"<tr>"+
+				"<td align='center'>"+(i+1)+"</td>"+
+				"<td align='center'>"+data[i]["年度"]+"</td>"+
+				"<td align='center'>"+data[i]["指示/發佈日期（民國）"]+"</td>"+
+				"<td>"+data[i]["內容/調整金額（新台幣）"]+"</td>"+
+				"<td align='center'>"+data[i]["實施日期（民國）"]+"</td>"+
+			"</tr>"
+		);
+	}
+}
+
+function sortTable(column, type){
+	const fields=[null, "年度", "指示/發佈日期（民國）", "內容/調整金額（新台幣）", "實施日期（民國）"];
+
+	const fieldName=fields[column];
+	if(!fieldName) return;
+
+	if(!sortStates[column]){
+		sortStates[column]="none";
+	}
+
+	//清除所有排序標記
+	for(let key in sortStates){
+		if(key != column){
+			sortStates[key]="none";
+		}
+	}
+
+	$("thead td").removeClass("sort-asc sort-desc");
+
+	if(sortStates[column]==="none"){
+		//升序
+		sortStates[column]="asc";
+		$("thead td[data-column='"+column+"']").addClass("sort-asc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valA) || 0)-(parseFloat(valB) || 0);
+			}else if(type==="date"){
+				return (valA || "").localeCompare(valB || "");
+			}else{
+				return (valA || "").toString().localeCompare((valB || "").toString());
+			}
+		});
+	}else if(sortStates[column]==="asc"){
+		//降序
+		sortStates[column]="desc";
+		$("thead td[data-column='"+column+"']").addClass("sort-desc");
+
+		currentData=[...originalData].sort((a,b)=>{
+			let valA=a[fieldName];
+			let valB=b[fieldName];
+
+			if(type==="number"){
+				return (parseFloat(valB) || 0)-(parseFloat(valA) || 0);
+			}else if(type==="date"){
+				return (valB || "").localeCompare(valA || "");
+			}else{
+				return (valB || "").toString().localeCompare((valA || "").toString());
+			}
+		});
+	}else{
+		//回到原始順序
+		sortStates[column]="none";
+		currentData=[...originalData];
+	}
+	renderTable(currentData);
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -148,24 +252,22 @@ $(document).ready(function(){
 		type:"get", //這裡用get請求 亦可用post
 		dataType:"json", //檔案類型
 		success:function(basic_sal){
-			//放入原本已有的資料
-			total_len=basic_sal.length;
-			console.log(total_len);
+			originalData=[...basic_sal];
+			currentData=[...basic_sal];
+
+			console.log("共載入"+basic_sal.length+"筆職缺資料");
 			console.log(basic_sal[0]);
+
 			//顯示表格
 			$("#tableContainer").show();
 
-			for(i=0;i<total_len;i++){
-				$("#row").append( //.html後面的都會被取代 要用增加的.append
-					"<tr>"+
-						"<td align='center'>"+(i+1)+"</td>"+
-						"<td align='center'>"+basic_sal[i]["年度"]+"</td>"+
-						"<td align='center'>"+basic_sal[i]["指示/發佈日期（民國）"]+"</td>"+
-						"<td>"+basic_sal[i]["內容/調整金額（新台幣）"]+"</td>"+
-						"<td align='center'>"+basic_sal[i]["實施日期（民國）"]+"</td>"+
-					"</tr>"
-				);
-			} //請求成功要執行的事情
+			renderTable(currentData);
+
+			$("thead td").click(function(){
+				const column=parseInt($(this).attr("data-column"));
+				const type=$(this).attr("data-type");
+				sortTable(column, type);
+			});
 		},
 		
 		error:function(e){
