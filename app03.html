@@ -3,6 +3,9 @@
 		<title>113年初任人員薪資</title>
 		<!--ajax引入-->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<!--SheetJS 用於匯出Excel-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 		<style>
 			body {
 			background-color: #8CBDB9;
@@ -117,6 +120,37 @@
 			box-shadow: 0 0 10px rgba(0,0,0,0.3);
 			}
 			
+			/* 下載表格儲存區 */
+			/* 下載按鈕區塊 */
+			.download-section {
+			text-align: center;
+			margin-bottom: 20px;
+			}
+
+			.download-btn {
+			background-color: #2D3E4E;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			font-size: 16px;
+			border-radius: 6px;
+			cursor: pointer;
+			margin: 0 10px;
+			transition: 0.3s;
+			}
+
+			.download-btn:hover {
+			background-color: #4CAF50;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			}
+
+			.download-btn.excel:hover {
+			background-color: #217346;
+			}
+
+			.download-btn.csv:hover {
+			background-color: #0066CC;
+			}
 		</style>
 	</head>
 
@@ -126,6 +160,12 @@
     <button class="back-btn" onclick="goHome()">
         返回首頁
     </button>
+</div>
+
+<!-- 下載按鈕區 -->
+<div class="download-section">
+	<button class="download-btn csv" onclick="downloadCSV()">下載儲存CSV</button>
+	<button class="download-btn excel" onclick="downloadExcel()">下載儲存Excel</button>
 </div>
 
 <div class="table_container" id="tableContainer" style="display:none;">
@@ -238,6 +278,88 @@ function sortTable(column, type){
 	renderTable(currentData);
 }
 
+//下載CSV
+function downloadCSV(){
+	if(currentData.length===0){
+		alert("沒有資料可下載！");
+		return;
+	}
+
+	//CSV標題行
+	const headers=[
+		"編號", "年度", "教育程度別", "特性別", "占該教育程度別初任人員人數結構比（%）", "薪資平均數（千元）"
+	];
+
+	//組合CSV內容
+	let csvContent="\uFEFF"; //UTF-8 BOM 解決中文亂碼
+	csvContent+=headers.join(",")+"\n";
+
+	currentData.forEach((row, index)=>{
+		const rowData=[
+			index+1,
+			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
+			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
+			row.CJOB1_COUNT || "",
+			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
+			row.CJOB2_COUNT || "",
+			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
+			row.JOB_PERSON || "",
+			row.STOP_DATE || "",
+			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
+			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
+			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
+			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
+			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
+			row.NT_L || "",
+			row.NT_U || "",
+			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
+			row.URL_QUERY || "",
+			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
+			row.TRANDATE || ""
+		];
+		csvContent+=rowData.join(",")+"\n";
+	});
+
+	//創建下載
+	const blob=new Blob([csvContent], {type:"text/csv;charset=utf-8;"});
+	const link=document.createElement("a");
+	const url=URL.createObjectURL(blob);
+	
+	link.setAttribute("href", url);
+	link.setAttribute("download", "113年初任人員薪資_"+new Date().toLocaleDateString('zh-TW')+".csv");
+	link.style.visibility="hidden";
+	
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+}
+
+//下載Excel
+function downloadExcel(){
+	if(currentData.length===0) {
+		alert("沒有資料可下載！");
+		return;
+	}
+
+	//準備Excel資料
+	const excelData=currentData.map((row, index) => ({
+		"編號": index+1,
+		"年度": row.年度 || "",
+		"教育程度別": row.教育程度別 || "",
+		"特性別": row.特性別 || "",
+		"占該教育程度別初任人員人數結構比（%）": row["占該教育程度別初任人員人數結構比（%）"] || "",
+		"薪資平均數（千元）": row["薪資平均數（千元）"] || ""
+	}));
+
+	//創建工作簿
+	const ws=XLSX.utils.json_to_sheet(excelData);
+	const wb=XLSX.utils.book_new();
+	XLSX.utils.book_append_sheet(wb, ws, "初任人員薪資");
+
+	//下載檔案
+	XLSX.writeFile(wb, "113年初任人員薪資_"+new Date().toLocaleDateString('zh-TW')+".xlsx");
+}
+
 //jquery=JQ使用方法 $(document).ready(function(){}) JQ是他人寫好的JS套件
 $(document).ready(function(){
 	//ajax屬於JQ的一部分
@@ -271,3 +393,5 @@ $(document).ready(function(){
 });
 
 </script>
+
+
