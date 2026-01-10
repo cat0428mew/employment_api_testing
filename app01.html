@@ -172,33 +172,33 @@
 			/* 下載表格儲存區 */
 			/* 下載按鈕區塊 */
 			.download-section {
-				text-align: center;
-				margin-bottom: 20px;
+			text-align: center;
+			margin-bottom: 20px;
 			}
 
 			.download-btn {
-				background-color: #2D3E4E;
-				color: white;
-				border: none;
-				padding: 10px 20px;
-				font-size: 16px;
-				border-radius: 6px;
-				cursor: pointer;
-				margin: 0 10px;
-				transition: 0.3s;
+			background-color: #2D3E4E;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			font-size: 16px;
+			border-radius: 6px;
+			cursor: pointer;
+			margin: 0 10px;
+			transition: 0.3s;
 			}
 
 			.download-btn:hover {
-				background-color: #4CAF50;
-				box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			background-color: #4CAF50;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
 			}
 
 			.download-btn.excel:hover {
-				background-color: #217346;
+			background-color: #217346;
 			}
 
 			.download-btn.csv:hover {
-				background-color: #0066CC;
+			background-color: #0066CC;
 			}
 		</style>
 	</head>
@@ -379,7 +379,7 @@ function sortTable(column, type){
 
 //下載CSV
 function downloadCSV(){
-	if(currentData.length === 0){
+	if(currentData.length===0){
 		alert("沒有資料可下載！");
 		return;
 	}
@@ -396,7 +396,7 @@ function downloadCSV(){
 	let csvContent="\uFEFF"; //UTF-8 BOM 解決中文亂碼
 	csvContent+=headers.join(",")+"\n";
 
-	currentData.forEach((row, index) => {
+	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
 			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
@@ -506,6 +506,7 @@ $(document).ready(function(){
 });
 
 </script>
+
 
 
 
