@@ -316,19 +316,19 @@ function renderTable(data){
 				"<td>"+data[i]["DISTNAME"]+"</td>"+
 				"<td>"+data[i]["BTINAME"]+"</td>"+
 				"<td align='center'>"+data[i]["HOURRANNAME"]+"</td>"+
-				"<td align='center'>"+data[i]["THOURS（數值）"]+"</td>"+
-				"<td align='center'>"+data[i]["CTNAME（縣市名稱）"]+"</td>"+
+				"<td align='center'>"+data[i]["THOURS"]+"</td>"+
+				"<td align='center'>"+data[i]["CTNAME"]+"</td>"+
 				"<td align='center'>"+data[i]["ZIPNAME"]+"</td>"+
-				"<td align='center'>"+data[i]["CAI_ZIPCODE（數量）"]+"</td>"+
-				"<td align='center'>"+data[i]["CAI_ZIPCODE2W（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["CAI_ZIPCODE"]+"</td>"+
+				"<td align='center'>"+data[i]["CAI_ZIPCODE2W"]+"</td>"+
 				"<td>"+data[i]["CAI_ADDRESS"]+"</td>"+
 				"<td>"+data[i]["CNAME"]+"</td>"+
 				"<td>"+data[i]["PHONE"]+"</td>"+
 				"<td>"+data[i]["PHONE_EXT"]+"</td>"+
 				"<td>"+data[i]["EMAIL"]+"</td>"+
-				"<td>"+data[i]["BCM_SNO（序號）"]+"</td>"+
+				"<td>"+data[i]["BCM_SNO"]+"</td>"+
 				"<td>"+data[i]["CLASSNAME"]+"</td>"+
-				"<td align='center'>"+data[i]["CYCLTYPE（數量）"]+"</td>"+
+				"<td align='center'>"+data[i]["CYCLTYPE"]+"</td>"+
 				"<td align='center'>"+data[i]["HashCode"]+"</td>"+
 			"</tr>"
 		);
@@ -479,19 +479,19 @@ function downloadExcel(){
 		"DISTNAME": row.DISTNAME || "",
 		"BTINAME": row.BTINAME || "",
 		"HOURRANNAME": row.HOURRANNAME || "",
-		"THOURS（數值）": row["THOURS（數值）"] || "",
-		"CTNAME（縣市名稱）": row["CTNAME（縣市名稱）"] || "",
+		"THOURS": row["THOURS"] || "",
+		"CTNAME": row["CTNAME"] || "",
 		"ZIPNAME": row.ZIPNAME || "",
-		"CAI_ZIPCODE（數量）": row["CAI_ZIPCODE（數量）"] || "",
-		"CAI_ZIPCODE2W（數量）": row["CAI_ZIPCODE2W（數量）"] || "",
+		"CAI_ZIPCODE": row["CAI_ZIPCODE"] || "",
+		"CAI_ZIPCODE2W": row["CAI_ZIPCODE2W"] || "",
 		"CAI_ADDRESS": row.CAI_ADDRESS || "",
 		"CNAME": row.CNAME || "",
 		"PHONE": row.PHONE || "",
 		"PHONE_EXT": row.PHONE_EXT || "",
 		"EMAIL": row.EMAIL || "",
-		"BCM_SNO（序號）": row["BCM_SNO（序號）"] || "",
+		"BCM_SNO": row["BCM_SNO"] || "",
 		"CLASSNAME": row.CLASSNAME || "",
-		"CYCLTYPE（數量）": row["CYCLTYPE（數量）"] || "",
+		"CYCLTYPE": row["CYCLTYPE"] || "",
 		"HashCode": row.HashCode || ""
 	}));
 
