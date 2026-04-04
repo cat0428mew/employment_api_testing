@@ -299,25 +299,12 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			row["序號"] || "",
+			row["勞保普通費率"] || "",
+			row["就保費率"] || "",
+			row["投保薪資"] || "",
+			row["勞工應負擔保費金額"] || "",
+			row["單位應負擔保費金額"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
@@ -396,4 +383,3 @@ $(document).ready(function(){
 });
 
 </script>
-
