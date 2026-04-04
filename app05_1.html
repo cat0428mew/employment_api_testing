@@ -349,25 +349,20 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			row["統計項目別"] || "",
+			row["細項"] || "",
+			row["樣本數（數量）"] || "",
+			row["有遇到困難（百分比）"] || "",
+			row["有遇到求職管道不足的困難（百分比）"] || "",
+			row["有遇到求職面試技巧不足或不會寫履歷的困難（百分比）"] || "",
+			row["有遇到工作內容要求不了解的困難（百分比）"] || "",
+			row["有遇到不知道自己適合做哪方面工作的困難（百分比）"] || "",
+			row["有遇到技能不足的困難（百分比）"] || "",
+			row["有遇到學歷不足的困難（百分比）"] || "",
+			row["有遇到經歷不足的困難（百分比）"] || "",
+			row["有遇到適合的職缺少的困難（百分比）"] || "",
+			row["有遇到其他的困難（百分比）"] || "",
+			row["沒有遇到困難（百分比）"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
@@ -454,6 +449,4 @@ $(document).ready(function(){
 });
 
 </script>
-
-
 
