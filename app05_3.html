@@ -356,25 +356,25 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			`"${(row["統計項目別"] || "").replace(/"/g, '""')}"`,
+    		`"${(row["細項"] || "").replace(/"/g, '""')}"`,
+    		`"${(row["樣本數（數量）"] || "")}"`,   // ← 加引號，避免千分位逗號斷格
+			row["沒有打算轉換工作（百分比）"] || "",
+			row["有打算轉換工作（百分比）"] || "",
+			row["因為薪資及福利不符期望（百分比）"] || "",
+			row["因為工作無發展前景（百分比）"] || "",
+			row["因為興趣不合（百分比）"] || "",
+			row["因為工作環境不佳（百分比）"] || "",
+			row["因為想更換工作地點（百分比）"] || "",
+			row["因為個人技能無法有效發揮（百分比）"] || "",
+			row["因為公司經營困難（百分比）"] || "",
+			row["因為家庭或健康因素（百分比）"] || "",
+			row["因為工作太累壓力大（百分比）"] || "",
+			row["因為與同事或主管相處困難（百分比）"] || "",
+			row["因為想自行開創事業（百分比）"] || "",
+			row["因為擔心被解僱（百分比）"] || "",
+			row["因為準備考試（百分比）"] || "",
+			row["因為其他（百分比）"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
@@ -466,4 +466,3 @@ $(document).ready(function(){
 });
 
 </script>
-
