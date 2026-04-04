@@ -8,7 +8,7 @@
 
 		<style>
 			body {
-			background-color: #8CBDB9 !important;
+			background-color: #8CBDB9;
 			color: white;
 			font-family: Arial, "Microsoft JhengHei", sans-serif;
 			margin: 0;
@@ -16,17 +16,16 @@
 			}
 			
 			h1 {
+			color: white; /* 防止被瀏覽器或iframe干擾 */
+			font-size: 24px; /* 明確固定大小 */
             text-align: center;
             margin-bottom: 20px;
-			color: white; /* 新增 避免被覆蓋 */
-			font-size: 16px;
 			}
 			
 			table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 3380px; /* 設定最小寬度,確保會出現橫向捲軸 */
-			table-layout: fixed; /* 這是關鍵!沒有這個寬度設定不會生效 */
+            min-width: 1500px; /* 設定最小寬度,確保會出現橫向捲軸 */
 			}
 			
 			thead {
@@ -67,41 +66,15 @@
 			content: "▲";
 			opacity: 1;
 			}
-
+			
 			tbody td {
             padding: 18px 8px;
             border: 1px solid #ddd;
             font-size: 15px;
             vertical-align: top;
             word-wrap: break-word; /* 確保長文字會自動斷行 */
-            /*background-color: white;*/ /* 會覆蓋到原本要的背景色 */
+            background-color: white;
             color: #333;
-			}
-
-			.text-content {
-			display: block; /*不能用inlline -webkit-line-clamp不支援display: inline*/
-			}
-
-			.text-content.collapsed {
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			}
-
-			.more-btn {
-			color: #2196F3;
-			cursor: pointer;
-			font-weight: bold;
-			text-decoration: underline;
-			margin-left: 5px;
-			white-space: nowrap;
-			display: inline-block; /*換行*/
-			}
-
-			.more-btn:hover {
-			color: #1976d2;
 			}
 			
 			/* 單數行 */
@@ -117,7 +90,7 @@
 			td {
 			padding: 10px 8px;
 			border: 1px solid #ddd;
-			font-size: 15px;
+			font-size: 13px;
 			vertical-align: top;
 			word-wrap: break-word; /* 文字自動換行 */
 			}
@@ -156,7 +129,7 @@
             max-height: 90vh;  /* 最大高度為視窗的 90% */
             margin: 20px auto;
             max-width: 95%;
-            background-color: transparent; /* 原本是white 蓋住藍綠色背景 */
+            background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 			}
@@ -212,7 +185,7 @@
 
 <body>
 <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin-bottom:20px;">
-	<h1 style="margin:0; color:white;">職業訓練課程資訊：</h1>
+	<h1 style="margin:0;">職業訓練課程資訊：</h1>
     <button class="back-btn" onclick="goHome()">
         返回首頁
     </button>
@@ -424,25 +397,30 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			`"${(row["URL（網址）"] || "").replace(/"/g, '""')}"`,
+			`"${(row["TRAINING_PERIOD"] || "").replace(/"/g, '""')}"`,
+			`"${(row["SIGNUP_PERIOD"] || "").replace(/"/g, '""')}"`,
+			`"${(row["TEST_DATE"] || "").replace(/"/g, '""')}"`,
+			`"${(row["FEE"] || "").replace(/"/g, '""')}"`,
+			`"${(row["PURPOSE"] || "").replace(/"/g, '""')}"`,
+			`"${(row["CONTENT"] || "").replace(/"/g, '""')}"`,
+			`"${(row["DISTNAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["BTINAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["HOURRANNAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["THOURS（統計數值）"] || "").toString().replace(/"/g, '""')}"`,
+			`"${(row["CTNAME（直轄市或省轄縣市）"] || "").replace(/"/g, '""')}"`,
+			`"${(row["ZIPNAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["CAI_ZIPCODE（郵遞區號）"] || "").toString().replace(/"/g, '""')}"`,
+			`"${(row["CAI_ZIPCODE2W（數量）"] || "").toString().replace(/"/g, '""')}"`,
+			`"${(row["CAI_ADDRESS"] || "").replace(/"/g, '""')}"`,
+			`"${(row["CNAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["PHONE"] || "").replace(/"/g, '""')}"`,
+			`"${(row["PHONE_EXT"] || "").replace(/"/g, '""')}"`,
+			`"${(row["EMAIL"] || "").replace(/"/g, '""')}"`,
+			`"${(row["BCM_SNO"] || "").replace(/"/g, '""')}"`,
+			`"${(row["CLASSNAME"] || "").replace(/"/g, '""')}"`,
+			`"${(row["CYCLTYPE（數量）"] || "").toString().replace(/"/g, '""')}"`,
+			`"${(row["HashCode"] || "").replace(/"/g, '""')}"`
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
