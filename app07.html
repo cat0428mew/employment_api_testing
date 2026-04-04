@@ -331,25 +331,18 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			row["年度"] || "",
+			row["許可證號"] || "",
+			row["公司名稱"] || "",
+			row["區域"] || "",
+			row["地址"] || "",
+			row["品質管理（統計數值）"] || "",
+			row["違規處分（統計數值）"] || "",
+			row["顧客服務（統計數值）"] || "",
+			row["其他事項（統計數值）"] || "",
+			row["總成績（統計數值）"] || "",
+			row["停業處分及申報暫停營業"] || "",
+			row["重大違法行為"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
