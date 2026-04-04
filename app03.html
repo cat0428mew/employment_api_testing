@@ -297,25 +297,11 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			row["年度"] || "",
+			row["教育程度別"] || "",
+			row["特性別"] || "",
+			row["占該教育程度別初任人員人數結構比（%）"] || "",
+			row["薪資平均數（千元）"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
@@ -393,5 +379,4 @@ $(document).ready(function(){
 });
 
 </script>
-
 
