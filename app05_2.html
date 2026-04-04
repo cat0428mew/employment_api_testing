@@ -312,25 +312,16 @@ function downloadCSV(){
 	currentData.forEach((row, index)=>{
 		const rowData=[
 			index+1,
-			`"${(row.OCCU_DESC || "").replace(/"/g, '""')}"`,
-			`"${(row.WK_TYPE || "").replace(/"/g, '""')}"`,
-			row.CJOB1_COUNT || "",
-			`"${(row.CJOB_NAME1 || "").replace(/"/g, '""')}"`,
-			row.CJOB2_COUNT || "",
-			`"${(row.CJOB_NAME2 || "").replace(/"/g, '""')}"`,
-			row.JOB_PERSON || "",
-			row.STOP_DATE || "",
-			`"${(row.JOB_DETAIL || "").replace(/"/g, '""')}"`,
-			`"${(row.CITYNAME || "").replace(/"/g, '""')}"`,
-			`"${(row.EXPERIENCE || "").replace(/"/g, '""')}"`,
-			`"${(row.WKTIME || "").replace(/"/g, '""')}"`,
-			`"${(row.SALARYCD || "").replace(/"/g, '""')}"`,
-			row.NT_L || "",
-			row.NT_U || "",
-			`"${(row.EDGRDESC || "").replace(/"/g, '""')}"`,
-			row.URL_QUERY || "",
-			`"${(row.COMPNAME || "").replace(/"/g, '""')}"`,
-			row.TRANDATE || ""
+			`"${(row["統計項目別"] || "").replace(/"/g, '""')}"`,
+        	`"${(row["細項"] || "").replace(/"/g, '""')}"`,
+			row["樣本數（數量）"] || "",
+			row["1個月（含）內（百分比）"] || "",
+			row["超過1個月~3個月（含）（百分比）"] || "",
+			row["超過3個月~6個月（含）（百分比）"] || "",
+			row["超過6個月~9個月（含）（百分比）"] || "",
+			row["超過9個月~12個月（含）（百分比）"] || "",
+			row["超過1年（百分比）"] || "",
+			row["平均尋職期間（月）"] || ""
 		];
 		csvContent+=rowData.join(",")+"\n";
 	});
@@ -413,4 +404,3 @@ $(document).ready(function(){
 });
 
 </script>
-
